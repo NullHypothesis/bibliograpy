@@ -252,11 +252,13 @@ def format_html(key, bib_entry, hilight = None):
 
     html.append("<a name=\"%s\">[" % key)
     if bib_entry.fields.has_key("url"):
-        html.append("</a><a href=\"%s\">pdf</a> " % \
+        html.append("</a><a href=\"%s\">pdf</a>, " % \
                     esc(bib_entry.fields["url"]))
 
-    html.append("(<a href=\"pdf/%s.pdf\">cached</a>), " \
-                "<a href=\"bibtex/%s.bib\">bib</a>]<br/>" % (key, key))
+    if os.path.isfile(sys.argv[1] + "/" + key + ".pdf"):
+        html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
+
+    html.append("<a href=\"bibtex/%s.bib\">bib</a>]<br/>\n" % key)
 
     # Add author/editor list.
 
