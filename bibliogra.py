@@ -303,8 +303,14 @@ def sort_by_year(bibdata, sort_reverse = False):
         except KeyError:
             return 0
 
+    def get_venue(key):
+        try:
+            return bibdata.entries[key].fields["booktitle"]
+        except KeyError:
+            return 0
+
     for bibkey in sorted(bibdata.entries.keys(),
-                         key = lambda k: get_year(k),
+                         key = lambda k: (get_year(k), get_venue(k)),
                          reverse = sort_reverse):
 
         if not year:
