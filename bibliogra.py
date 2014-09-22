@@ -386,7 +386,10 @@ def main():
 
     if len(sys.argv) < 2:
         print >> sys.stderr, \
-              "\nUsage: %s OUTPUT_DIR [BIBTEX_FILE]\n" % sys.argv[0]
+              "\nUsage: %s OUTPUT_DIR [BIBTEX_FILE]\n\nOUTPUT_DIR:  The " \
+              "directory to which all HTML-formatted output files are " \
+              "written to.\nBIBTEX_FILE: If no BibTeX file is given as " \
+              "input, BibTeX entries are read from stdin.\n" % sys.argv[0]
         return 1
 
     create_directory(sys.argv[1])
