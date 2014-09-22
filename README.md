@@ -20,7 +20,7 @@ Alternatively, you can feed the tool over `stdin`:
 
     $ cat BIBTEX_FILE | ./bibliograpy OUTPUT_DIRECTORY
 
-Running `bibliograpy` will result in four HTML files which sort the
+Running `bibliograpy` will result in five HTML files which sort the
 bibliography by year, reverse year, author, and reverse author.  Furthermore,
 the tool tries to add links to local copies of publications.  It adds such a
 link if it can find the respective publication in
