@@ -255,10 +255,10 @@ def format_html(key, bib_entry, hilight = None):
         html.append("</a><a href=\"%s\">pdf</a>, " % \
                     esc(bib_entry.fields["url"]))
 
-    if os.path.isfile(sys.argv[1] + "/" + key + ".pdf"):
+    if os.path.isfile(sys.argv[1] + "/pdf/" + key + ".pdf"):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
 
-    html.append("<a href=\"bibtex/%s.bib\">bib</a>]<br/>\n" % key)
+    html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
 
     # Add author/editor list.
 
@@ -379,6 +379,40 @@ def sort_by_author(bibdata, sort_reverse = False):
 
     return "".join(html)
 
+
+def dump_bibtex_entry(entry):
+    """
+    Convert pybtex's Entry() object back to an HTML-formatted BibTeX string.
+    """
+
+    # Create the BibTeX entry header and the HTML links.
+
+    text = []
+    text.append("<pre>\n")
+    text.append("<a name=\"%s\">@</a>%s{<a href=\"bibtex.html#%s\">%s</a>,\n" %
+                (entry.key, entry.type, entry.key, entry.key))
+
+    # Create the author list.
+
+    authors = []
+    if entry.persons.get("author"):
+        for author in entry.persons.get("author"):
+            authors.append("%s" % author_to_string(author))
+    else:
+        print entry
+    text.append("  authors = {%s},\n" % " and ".join(authors))
+
+    # Create all remaining fields and close the BibTeX entry.
+
+    for key in entry.fields:
+        text.append("  %s = {%s},\n" % (key, entry.fields[key]))
+
+    text.append("}\n")
+    text.append("</pre>")
+
+    return "".join(text)
+
+
 def main():
     """
     Entry point for this tool.
@@ -418,6 +452,26 @@ def main():
                header + sort_by_author(bibdata) + footer)
     write_file(sys.argv[1] + "/author_reverse.html",
                header + sort_by_author(bibdata, sort_reverse = True) + footer)
+
+    # Create HTML-formatted BibTex file.
+
+    data = ["""
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>BibTeX entries</title>
+</head>
+<body>
+ """]
+
+    for bibkey in bibdata.entries:
+        data.append(dump_bibtex_entry(bibdata.entries[bibkey]))
+
+    data.append("</body>\n</html>\n")
+
+    write_file(sys.argv[1] + "/bibtex.html", "".join(data))
 
     return 0
 
