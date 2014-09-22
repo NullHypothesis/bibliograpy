@@ -87,7 +87,7 @@ def print_article(bib_entry):
     if bib_entry.fields.has_key("journal"):
         journal = bib_entry.fields["journal"]
 
-    return "Article in: <span class=\"venue\">%s</span>, %s" % \
+    return "Article in: <span class=\"venue\">%s</span>, %s\n" % \
             (esc(journal), esc(year))
 
 def print_inproceedings(bib_entry):
@@ -106,7 +106,7 @@ def print_inproceedings(bib_entry):
     if bib_entry.fields.has_key("publisher"):
         publisher = bib_entry.fields["publisher"]
 
-    return "In Proc. of: <span class=\"venue\">%s</span>, %s, %s" % \
+    return "In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" % \
            (esc(booktitle), esc(year), esc(publisher))
 
 def print_proceedings(bib_entry):
@@ -122,7 +122,7 @@ def print_proceedings(bib_entry):
     if bib_entry.fields.has_key("publisher"):
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Proceedings</span>, %s, %s" % \
+    return "<span class=\"venue\">Proceedings</span>, %s, %s\n" % \
            (esc(publisher), esc(year))
 
 def print_techreport(bib_entry):
@@ -138,7 +138,7 @@ def print_techreport(bib_entry):
     if bib_entry.fields.has_key("institution"):
         institution = bib_entry.fields["institution"]
 
-    return "<span class=\"venue\">Technical Report</span>, %s, %s" % \
+    return "<span class=\"venue\">Technical Report</span>, %s, %s\n" % \
            (esc(year), esc(institution))
 
 def print_inbook(bib_entry):
@@ -154,7 +154,7 @@ def print_inbook(bib_entry):
     if bib_entry.fields.has_key("publisher"):
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Book chapter</span>, %s, %s" % \
+    return "<span class=\"venue\">Book chapter</span>, %s, %s\n" % \
             (esc(publisher), esc(year))
 
 def print_book(bib_entry):
@@ -170,7 +170,7 @@ def print_book(bib_entry):
     if bib_entry.fields.has_key("publisher"):
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Book</span>, %s, %s" % \
+    return "<span class=\"venue\">Book</span>, %s, %s\n" % \
             (esc(publisher), esc(year))
 
 def print_phdthesis(bib_entry):
@@ -186,7 +186,7 @@ def print_phdthesis(bib_entry):
     if bib_entry.fields.has_key("year"):
         year = bib_entry.fields["year"]
 
-    return "Ph.D thesis: <span class=\"venue\">%s</span>, %s" % \
+    return "Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" % \
            (esc(school), esc(year))
 
 def print_misc(bib_entry):
@@ -194,7 +194,7 @@ def print_misc(bib_entry):
     Convert the given BibTeX stuff to HTML.
     """
 
-    return "<span class=\"venue\">Miscellaneous</span>"
+    return "<span class=\"venue\">Miscellaneous</span>\n"
 
 conversion_table = {
     "article": print_article,
@@ -243,11 +243,11 @@ def format_html(key, bib_entry, hilight = None):
 
     html = []
 
-    html.append("<li>")
+    html.append("<li>\n")
 
     # Header including paper title and links to pdf and bibtex.
 
-    html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span> " % \
+    html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span>\n" % \
                 (key, esc(bib_entry.fields["title"])))
 
     html.append("<a name=\"%s\">[" % key)
@@ -279,7 +279,7 @@ def format_html(key, bib_entry, hilight = None):
         venue = venue.replace(hilight, "<b>%s</b>" % hilight)
 
     html.append(venue)
-    html.append("</li>")
+    html.append("</li>\n")
 
     # Remove curly braces because latexcodec won't do it for us.
 
