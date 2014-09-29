@@ -19,6 +19,7 @@ import os
 import sys
 import cgi
 import errno
+import argparse
 
 import latexcodec
 import pybtex.database.input.bibtex as bibtex
@@ -236,7 +237,7 @@ def format_authors(persons, hilight):
 
     return authors_str
 
-def format_html(key, bib_entry, hilight = None):
+def format_html(key, bib_entry, output_dir, hilight = None):
     """
     Convert the given BibTeX entry to HTML.
     """
@@ -255,7 +256,7 @@ def format_html(key, bib_entry, hilight = None):
         html.append("</a><a href=\"%s\">pdf</a>, " % \
                     esc(bib_entry.fields["url"]))
 
-    if os.path.isfile(sys.argv[1] + "/pdf/" + key + ".pdf"):
+    if os.path.isfile(output_dir + "/pdf/" + key + ".pdf"):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
 
     html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
@@ -287,7 +288,7 @@ def format_html(key, bib_entry, hilight = None):
 
     return final_html.decode("latex")
 
-def sort_by_year(bibdata, sort_reverse = False):
+def sort_by_year(bibdata, output_dir, sort_reverse = False):
     """
     Convert BibTeX data to HTML code sorted by (reverse) year.
     """
@@ -324,6 +325,7 @@ def sort_by_year(bibdata, sort_reverse = False):
         try:
             html.append(format_html(bibkey,
                                     bibdata.entries[bibkey],
+                                    output_dir,
                                     hilight=str(year)))
         except NotImplementedError as err:
             print >> sys.stderr, "[+] %s" % err
@@ -333,7 +335,7 @@ def sort_by_year(bibdata, sort_reverse = False):
 
     return "".join(html)
 
-def sort_by_author(bibdata, sort_reverse = False):
+def sort_by_author(bibdata, output_dir, sort_reverse = False):
     """
     Convert BibTeX data to HTML code sorted by (reverse) author.
     """
@@ -367,6 +369,7 @@ def sort_by_author(bibdata, sort_reverse = False):
             for bibkey in publications[author]:
                 html.append(format_html(bibkey,
                                         bibdata.entries[bibkey],
+                                        output_dir,
                                         hilight=author))
         except NotImplementedError as err:
             print >> sys.stderr, "[+] %s" % err
@@ -411,45 +414,73 @@ def dump_bibtex_entry(entry):
     return "".join(text)
 
 
+def parse_args():
+
+    desc_text = "Generate an HTML bibliography from a BibTeX file."
+
+    parser = argparse.ArgumentParser(description=desc_text)
+
+    parser.add_argument("OUTPUT_DIR",
+                        help="The directory to which all HTML-formatted "
+                             "output files are written to.")
+
+    parser.add_argument("-H",
+                        "--header",
+                        type=str,
+                        default="header.tpl",
+                        help="HTML header prepended to the HTML files.")
+
+    parser.add_argument("-F",
+                        "--footer",
+                        type=str,
+                        default="footer.tpl",
+                        help="HTML footer appended to the HTML files.")
+
+    parser.add_argument("-f",
+                        "--file-name",
+                        type=str,
+                        default=None,
+                        help="The BibTeX file.  If no BibTeX file is given as "
+                             "input, BibTeX entries are read from stdin.")
+
+    return parser.parse_args()
+
+
 def main():
     """
     Entry point for this tool.
     """
 
-    if len(sys.argv) < 2:
-        print >> sys.stderr, \
-              "\nUsage: %s OUTPUT_DIR [BIBTEX_FILE]\n\nOUTPUT_DIR:  The " \
-              "directory to which all HTML-formatted output files are " \
-              "written to.\nBIBTEX_FILE: If no BibTeX file is given as " \
-              "input, BibTeX entries are read from stdin.\n" % sys.argv[0]
-        return 1
+    args = parse_args()
 
-    create_directory(sys.argv[1])
+    create_directory(args.OUTPUT_DIR)
 
     # Read a BibTeX file (if given) or otherwise read from stdin.
 
     parser = bibtex.Parser()
-    if (len(sys.argv) == 3) and os.path.isfile(sys.argv[2]):
-        bibdata = parser.parse_file(sys.argv[2])
+    if args.file_name:
+        bibdata = parser.parse_file(args.file_name)
     else:
         bibdata = parser.parse_stream(sys.stdin)
 
-    header = read_file("header.tpl")
-    footer = read_file("footer.tpl")
+    header = read_file(args.header)
+    footer = read_file(args.footer)
 
     # Write HTML files sorted by year and reverse year.
 
-    write_file(sys.argv[1] + "/year.html",
-               header + sort_by_year(bibdata) + footer)
-    write_file(sys.argv[1] + "/year_reverse.html",
-               header + sort_by_year(bibdata, sort_reverse = True) + footer)
+    write_file(args.OUTPUT_DIR + "/year.html",
+               header + sort_by_year(bibdata, args.OUTPUT_DIR) + footer)
+    write_file(args.OUTPUT_DIR + "/year_reverse.html",
+               header + sort_by_year(bibdata, args.OUTPUT_DIR,
+                                     sort_reverse = True) + footer)
 
     # Write HTML files sorted by author and reverse author.
 
-    write_file(sys.argv[1] + "/author.html",
-               header + sort_by_author(bibdata) + footer)
-    write_file(sys.argv[1] + "/author_reverse.html",
-               header + sort_by_author(bibdata, sort_reverse = True) + footer)
+    write_file(args.OUTPUT_DIR + "/author.html",
+               header + sort_by_author(bibdata, args.OUTPUT_DIR) + footer)
+    write_file(args.OUTPUT_DIR + "/author_reverse.html",
+               header + sort_by_author(bibdata, args.OUTPUT_DIR,
+                                       sort_reverse = True) + footer)
 
     # Create HTML-formatted BibTex file.
 
@@ -469,7 +500,7 @@ def main():
 
     data.append("</body>\n</html>\n")
 
-    write_file(sys.argv[1] + "/bibtex.html", "".join(data))
+    write_file(args.OUTPUT_DIR + "/bibtex.html", "".join(data))
 
     return 0
 
