@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2014 Philipp Winter <phw@nymity.ch>
+# Copyright 2014, 2015 Philipp Winter <phw@nymity.ch>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -258,6 +258,8 @@ def format_html(key, bib_entry, output_dir, hilight = None):
 
     if os.path.isfile(output_dir + "/pdf/" + key + ".pdf"):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
+    elif os.path.isfile(output_dir + "/ps/" + key + ".ps"):
+        html.append("<a href=\"ps/%s.ps\">cached ps</a>, " % key)
 
     html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
 
