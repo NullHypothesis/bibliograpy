@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Turn BibTeX files into HTML bibliographies.
+"""
+
 import os
 import sys
 import cgi
@@ -26,13 +30,11 @@ import pybtex.database.input.bibtex as bibtex
 
 esc = cgi.escape
 
+
 def create_directory(dir_name):
     """
     Create directory tree if it does not exist already.
     """
-
-    # The following code snippet is taken from:
-    # <http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python>
 
     try:
         os.makedirs(dir_name)
@@ -41,6 +43,7 @@ def create_directory(dir_name):
             pass
         else:
             raise
+
 
 def read_file(file_name):
     """
@@ -53,6 +56,7 @@ def read_file(file_name):
     except IOError:
         return ""
 
+
 def write_file(file_name, data):
     """
     Write `data' to `file_name'.
@@ -63,6 +67,7 @@ def write_file(file_name, data):
             fd.write(data.encode("utf8"))
     except IOError as err:
         print >> sys.stderr, "[+] Error writing file: %s" % err
+
 
 def author_to_string(author):
     """
@@ -75,6 +80,7 @@ def author_to_string(author):
 
     return " ".join([name for name in [first, middle, last] if name])
 
+
 def print_article(bib_entry):
     """
     Convert the given BibTeX article to HTML.
@@ -82,14 +88,15 @@ def print_article(bib_entry):
 
     year = journal = ""
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("journal"):
+    if "journal" in bib_entry.fields:
         journal = bib_entry.fields["journal"]
 
     return "Article in: <span class=\"venue\">%s</span>, %s\n" % \
             (esc(journal), esc(year))
+
 
 def print_inproceedings(bib_entry):
     """
@@ -98,17 +105,18 @@ def print_inproceedings(bib_entry):
 
     booktitle = year = publisher = ""
 
-    if bib_entry.fields.has_key("booktitle"):
+    if "booktitle" in bib_entry.fields:
         booktitle = bib_entry.fields["booktitle"]
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("publisher"):
+    if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
     return "In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" % \
            (esc(booktitle), esc(year), esc(publisher))
+
 
 def print_proceedings(bib_entry):
     """
@@ -117,14 +125,15 @@ def print_proceedings(bib_entry):
 
     year = publisher = ""
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("publisher"):
+    if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
     return "<span class=\"venue\">Proceedings</span>, %s, %s\n" % \
            (esc(publisher), esc(year))
+
 
 def print_techreport(bib_entry):
     """
@@ -133,14 +142,15 @@ def print_techreport(bib_entry):
 
     year = institution = ""
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("institution"):
+    if "institution" in bib_entry.fields:
         institution = bib_entry.fields["institution"]
 
     return "<span class=\"venue\">Technical Report</span>, %s, %s\n" % \
            (esc(year), esc(institution))
+
 
 def print_inbook(bib_entry):
     """
@@ -149,14 +159,15 @@ def print_inbook(bib_entry):
 
     year = publisher = ""
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("publisher"):
+    if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
     return "<span class=\"venue\">Book chapter</span>, %s, %s\n" % \
             (esc(publisher), esc(year))
+
 
 def print_book(bib_entry):
     """
@@ -165,14 +176,15 @@ def print_book(bib_entry):
 
     year = publisher = ""
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    if bib_entry.fields.has_key("publisher"):
+    if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
     return "<span class=\"venue\">Book</span>, %s, %s\n" % \
             (esc(publisher), esc(year))
+
 
 def print_phdthesis(bib_entry):
     """
@@ -181,14 +193,15 @@ def print_phdthesis(bib_entry):
 
     school = year = ""
 
-    if bib_entry.fields.has_key("school"):
+    if "school" in bib_entry.fields:
         school = bib_entry.fields["school"]
 
-    if bib_entry.fields.has_key("year"):
+    if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
     return "Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" % \
            (esc(school), esc(year))
+
 
 def print_misc(bib_entry):
     """
@@ -196,6 +209,7 @@ def print_misc(bib_entry):
     """
 
     return "<span class=\"venue\">Miscellaneous</span>\n"
+
 
 conversion_table = {
     "article": print_article,
@@ -208,6 +222,7 @@ conversion_table = {
     "misc": print_misc,
 }
 
+
 def format_authors(persons, hilight):
     """
     Generate an HTML-formatted list of authors or editors.
@@ -215,21 +230,21 @@ def format_authors(persons, hilight):
 
     authors_list = []
 
-    if persons.has_key("author"):
+    if "author" in persons:
         author_type = "author"
-    elif persons.has_key("editor"):
+    elif "editor" in persons:
         author_type = "editor"
     else:
         raise IndexError("BibTeX entry has neither `author' nor "
                          "`editor' field.")
 
     for person in persons[author_type]:
-        authors_list.append(" ".join(person.first() + \
-                                    person.middle() + \
+        authors_list.append(" ".join(person.first() +
+                                    person.middle() +
                                     person.last()))
 
     authors_str = "%s%s<br/>" % (", ".join(authors_list),
-                                 " (editors)" if author_type == "editor" \
+                                 " (editors)" if author_type == "editor"
                                               else "")
 
     if hilight:
@@ -237,7 +252,8 @@ def format_authors(persons, hilight):
 
     return authors_str
 
-def format_html(key, bib_entry, output_dir, hilight = None):
+
+def format_html(key, bib_entry, output_dir, hilight=None):
     """
     Convert the given BibTeX entry to HTML.
     """
@@ -248,12 +264,12 @@ def format_html(key, bib_entry, output_dir, hilight = None):
 
     # Header including paper title and links to pdf and bibtex.
 
-    html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span>\n" % \
+    html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span>\n" %
                 (key, esc(bib_entry.fields["title"])))
 
     html.append("<a name=\"%s\">[" % key)
-    if bib_entry.fields.has_key("url"):
-        html.append("</a><a href=\"%s\">pdf</a>, " % \
+    if "url" in bib_entry.fields:
+        html.append("</a><a href=\"%s\">pdf</a>, " %
                     esc(bib_entry.fields["url"]))
 
     if os.path.isfile(output_dir + "/pdf/" + key + ".pdf"):
@@ -272,7 +288,7 @@ def format_html(key, bib_entry, output_dir, hilight = None):
 
     # Add venue/publication type.
 
-    if not conversion_table.has_key(bib_entry.type):
+    if not (bib_entry.type in conversion_table):
         raise NotImplementedError("BibTeX type `%s' not supported.  "
                                   "Skipping" % bib_entry.type)
 
@@ -290,7 +306,8 @@ def format_html(key, bib_entry, output_dir, hilight = None):
 
     return final_html.decode("latex")
 
-def sort_by_year(bibdata, output_dir, sort_reverse = False):
+
+def sort_by_year(bibdata, output_dir, sort_reverse=False):
     """
     Convert BibTeX data to HTML code sorted by (reverse) year.
     """
@@ -313,8 +330,8 @@ def sort_by_year(bibdata, output_dir, sort_reverse = False):
             return 0
 
     for bibkey in sorted(bibdata.entries.keys(),
-                         key = lambda k: (get_year(k), get_venue(k)),
-                         reverse = sort_reverse):
+                         key=lambda k: (get_year(k), get_venue(k)),
+                         reverse=sort_reverse):
 
         if not year:
             year = get_year(bibkey)
@@ -337,7 +354,8 @@ def sort_by_year(bibdata, output_dir, sort_reverse = False):
 
     return "".join(html)
 
-def sort_by_author(bibdata, output_dir, sort_reverse = False):
+
+def sort_by_author(bibdata, output_dir, sort_reverse=False):
     """
     Convert BibTeX data to HTML code sorted by (reverse) author.
     """
@@ -355,7 +373,7 @@ def sort_by_author(bibdata, output_dir, sort_reverse = False):
 
         for author in bibdata.entries[bibkey].persons.values()[0]:
 
-            if publications.has_key(author_to_string(author)):
+            if author_to_string(author) in publications:
                 publications[author_to_string(author)].append(bibkey)
             else:
                 publications[author_to_string(author)] = [bibkey]
@@ -364,8 +382,8 @@ def sort_by_author(bibdata, output_dir, sort_reverse = False):
     author = None
 
     for author in sorted(publications.keys(),
-                         key = lambda name: name.split(' ')[-1],
-                         reverse = sort_reverse):
+                         key=lambda name: name.split(' ')[-1],
+                         reverse=sort_reverse):
 
         try:
             for bibkey in publications[author]:
@@ -474,7 +492,7 @@ def main():
                header + sort_by_year(bibdata, args.OUTPUT_DIR) + footer)
     write_file(args.OUTPUT_DIR + "/year_reverse.html",
                header + sort_by_year(bibdata, args.OUTPUT_DIR,
-                                     sort_reverse = True) + footer)
+                                     sort_reverse=True) + footer)
 
     # Write HTML files sorted by author and reverse author.
 
@@ -482,7 +500,7 @@ def main():
                header + sort_by_author(bibdata, args.OUTPUT_DIR) + footer)
     write_file(args.OUTPUT_DIR + "/author_reverse.html",
                header + sort_by_author(bibdata, args.OUTPUT_DIR,
-                                       sort_reverse = True) + footer)
+                                       sort_reverse=True) + footer)
 
     # Create HTML-formatted BibTex file.
 
@@ -505,6 +523,7 @@ def main():
     write_file(args.OUTPUT_DIR + "/bibtex.html", "".join(data))
 
     return 0
+
 
 if __name__ == "__main__":
     exit(main())
