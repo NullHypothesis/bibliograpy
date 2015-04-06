@@ -269,9 +269,9 @@ def format_html(key, bib_entry, output_dir, hilight=None):
         html.append(
             "</a><a href=\"%s\">pdf</a>, " % esc(bib_entry.fields["url"]))
 
-    if os.path.isfile(output_dir + "/pdf/" + key + ".pdf"):
+    if os.path.isfile(os.path.join(output_dir, "pdf", key + ".pdf")):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
-    elif os.path.isfile(output_dir + "/ps/" + key + ".ps"):
+    elif os.path.isfile(os.path.join(output_dir, "ps", key + ".ps")):
         html.append("<a href=\"ps/%s.ps\">cached ps</a>, " % key)
 
     html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
@@ -480,17 +480,17 @@ def main(output_dir,
 
     # Write HTML files sorted by year and reverse year.
 
-    write_file(output_dir + "/year.html",
+    write_file(os.path.join(output_dir, "year.html"),
                header + sort_by_year(bibdata, output_dir) + footer)
-    write_file(output_dir + "/year_reverse.html",
+    write_file(os.path.join(output_dir, "year_reverse.html"),
                header + sort_by_year(bibdata, output_dir,
                                      sort_reverse=True) + footer)
 
     # Write HTML files sorted by author and reverse author.
 
-    write_file(output_dir + "/author.html",
+    write_file(os.path.join(output_dir, "author.html"),
                header + sort_by_author(bibdata, output_dir) + footer)
-    write_file(output_dir + "/author_reverse.html",
+    write_file(os.path.join(output_dir, "author_reverse.html"),
                header + sort_by_author(bibdata, output_dir,
                                        sort_reverse=True) + footer)
 
@@ -512,7 +512,7 @@ def main(output_dir,
 
     data.append("</body>\n</html>\n")
 
-    write_file(output_dir + "/bibtex.html", "".join(data))
+    write_file(os.path.join(output_dir, "bibtex.html"), "".join(data))
 
     return 0
 
