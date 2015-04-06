@@ -520,4 +520,4 @@ def main(output_dir,
 if __name__ == "__main__":
 
     args = parse_args()
-    exit(main(args.OUTPUT_DIR, args.file_name, args.header, args.footer))
+    sys.exit(main(args.OUTPUT_DIR, args.file_name, args.header, args.footer))
