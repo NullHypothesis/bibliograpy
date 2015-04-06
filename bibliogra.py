@@ -457,40 +457,41 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main(output_dir,
+         file_name=None,
+         header_file="header.tpl",
+         footer_file="footer.tpl"):
     """
     Entry point for this tool.
     """
 
-    args = parse_args()
-
-    create_directory(args.OUTPUT_DIR)
+    create_directory(output_dir)
 
     # Read a BibTeX file (if given) or otherwise read from stdin.
 
     parser = bibtex.Parser()
-    if args.file_name:
-        bibdata = parser.parse_file(args.file_name)
+    if file_name:
+        bibdata = parser.parse_file(file_name)
     else:
         bibdata = parser.parse_stream(sys.stdin)
 
-    header = read_file(args.header)
-    footer = read_file(args.footer)
+    header = read_file(header_file)
+    footer = read_file(footer_file)
 
     # Write HTML files sorted by year and reverse year.
 
-    write_file(args.OUTPUT_DIR + "/year.html",
-               header + sort_by_year(bibdata, args.OUTPUT_DIR) + footer)
-    write_file(args.OUTPUT_DIR + "/year_reverse.html",
-               header + sort_by_year(bibdata, args.OUTPUT_DIR,
+    write_file(output_dir + "/year.html",
+               header + sort_by_year(bibdata, output_dir) + footer)
+    write_file(output_dir + "/year_reverse.html",
+               header + sort_by_year(bibdata, output_dir,
                                      sort_reverse=True) + footer)
 
     # Write HTML files sorted by author and reverse author.
 
-    write_file(args.OUTPUT_DIR + "/author.html",
-               header + sort_by_author(bibdata, args.OUTPUT_DIR) + footer)
-    write_file(args.OUTPUT_DIR + "/author_reverse.html",
-               header + sort_by_author(bibdata, args.OUTPUT_DIR,
+    write_file(output_dir + "/author.html",
+               header + sort_by_author(bibdata, output_dir) + footer)
+    write_file(output_dir + "/author_reverse.html",
+               header + sort_by_author(bibdata, output_dir,
                                        sort_reverse=True) + footer)
 
     # Create HTML-formatted BibTex file.
@@ -511,10 +512,12 @@ def main():
 
     data.append("</body>\n</html>\n")
 
-    write_file(args.OUTPUT_DIR + "/bibtex.html", "".join(data))
+    write_file(output_dir + "/bibtex.html", "".join(data))
 
     return 0
 
 
 if __name__ == "__main__":
-    exit(main())
+
+    args = parse_args()
+    exit(main(args.OUTPUT_DIR, args.file_name, args.header, args.footer))
