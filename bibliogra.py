@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """
 Turn BibTeX files into HTML bibliographies.
 """
@@ -94,8 +93,8 @@ def print_article(bib_entry):
     if "journal" in bib_entry.fields:
         journal = bib_entry.fields["journal"]
 
-    return "Article in: <span class=\"venue\">%s</span>, %s\n" % \
-            (esc(journal), esc(year))
+    return "Article in: <span class=\"venue\">%s</span>, %s\n" % (esc(journal),
+                                                                  esc(year))
 
 
 def print_inproceedings(bib_entry):
@@ -114,8 +113,8 @@ def print_inproceedings(bib_entry):
     if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
-    return "In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" % \
-           (esc(booktitle), esc(year), esc(publisher))
+    return ("In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" %
+            (esc(booktitle), esc(year), esc(publisher)))
 
 
 def print_proceedings(bib_entry):
@@ -131,8 +130,8 @@ def print_proceedings(bib_entry):
     if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Proceedings</span>, %s, %s\n" % \
-           (esc(publisher), esc(year))
+    return ("<span class=\"venue\">Proceedings</span>, %s, %s\n" %
+            (esc(publisher), esc(year)))
 
 
 def print_techreport(bib_entry):
@@ -148,8 +147,8 @@ def print_techreport(bib_entry):
     if "institution" in bib_entry.fields:
         institution = bib_entry.fields["institution"]
 
-    return "<span class=\"venue\">Technical Report</span>, %s, %s\n" % \
-           (esc(year), esc(institution))
+    return ("<span class=\"venue\">Technical Report</span>, %s, %s\n" %
+            (esc(year), esc(institution)))
 
 
 def print_inbook(bib_entry):
@@ -165,8 +164,8 @@ def print_inbook(bib_entry):
     if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Book chapter</span>, %s, %s\n" % \
-            (esc(publisher), esc(year))
+    return ("<span class=\"venue\">Book chapter</span>, %s, %s\n" %
+            (esc(publisher), esc(year)))
 
 
 def print_book(bib_entry):
@@ -182,8 +181,8 @@ def print_book(bib_entry):
     if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Book</span>, %s, %s\n" % \
-            (esc(publisher), esc(year))
+    return "<span class=\"venue\">Book</span>, %s, %s\n" % (esc(publisher),
+                                                            esc(year))
 
 
 def print_phdthesis(bib_entry):
@@ -199,8 +198,8 @@ def print_phdthesis(bib_entry):
     if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    return "Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" % \
-           (esc(school), esc(year))
+    return "Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" % (esc(school),
+                                                                   esc(year))
 
 
 def print_misc(bib_entry):
@@ -239,13 +238,11 @@ def format_authors(persons, hilight):
                          "`editor' field.")
 
     for person in persons[author_type]:
-        authors_list.append(" ".join(person.first() +
-                                    person.middle() +
-                                    person.last()))
+        authors_list.append(
+            " ".join(person.first() + person.middle() + person.last()))
 
-    authors_str = "%s%s<br/>" % (", ".join(authors_list),
-                                 " (editors)" if author_type == "editor"
-                                              else "")
+    authors_str = "%s%s<br/>" % (", ".join(authors_list), " (editors)"
+                                 if author_type == "editor" else "")
 
     if hilight:
         authors_str = authors_str.replace(hilight, "<b>%s</b>" % hilight)
@@ -269,8 +266,8 @@ def format_html(key, bib_entry, output_dir, hilight=None):
 
     html.append("<a name=\"%s\">[" % key)
     if "url" in bib_entry.fields:
-        html.append("</a><a href=\"%s\">pdf</a>, " %
-                    esc(bib_entry.fields["url"]))
+        html.append(
+            "</a><a href=\"%s\">pdf</a>, " % esc(bib_entry.fields["url"]))
 
     if os.path.isfile(output_dir + "/pdf/" + key + ".pdf"):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
@@ -342,9 +339,7 @@ def sort_by_year(bibdata, output_dir, sort_reverse=False):
             year = current_year
 
         try:
-            html.append(format_html(bibkey,
-                                    bibdata.entries[bibkey],
-                                    output_dir,
+            html.append(format_html(bibkey, bibdata.entries[bibkey], output_dir,
                                     hilight=str(year)))
         except NotImplementedError as err:
             print >> sys.stderr, "[+] %s" % err
@@ -387,8 +382,7 @@ def sort_by_author(bibdata, output_dir, sort_reverse=False):
 
         try:
             for bibkey in publications[author]:
-                html.append(format_html(bibkey,
-                                        bibdata.entries[bibkey],
+                html.append(format_html(bibkey, bibdata.entries[bibkey],
                                         output_dir,
                                         hilight=author))
         except NotImplementedError as err:
@@ -442,26 +436,23 @@ def parse_args():
 
     parser.add_argument("OUTPUT_DIR",
                         help="The directory to which all HTML-formatted "
-                             "output files are written to.")
+                        "output files are written to.")
 
-    parser.add_argument("-H",
-                        "--header",
+    parser.add_argument("-H", "--header",
                         type=str,
                         default="header.tpl",
                         help="HTML header prepended to the HTML files.")
 
-    parser.add_argument("-F",
-                        "--footer",
+    parser.add_argument("-F", "--footer",
                         type=str,
                         default="footer.tpl",
                         help="HTML footer appended to the HTML files.")
 
-    parser.add_argument("-f",
-                        "--file-name",
+    parser.add_argument("-f", "--file-name",
                         type=str,
                         default=None,
                         help="The BibTeX file.  If no BibTeX file is given as "
-                             "input, BibTeX entries are read from stdin.")
+                        "input, BibTeX entries are read from stdin.")
 
     return parser.parse_args()
 
