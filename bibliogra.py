@@ -415,7 +415,7 @@ def dump_bibtex_entry(entry):
     if entry.persons.get("author"):
         for author in entry.persons.get("author"):
             authors.append("%s" % author_to_string(author))
-    text.append("  authors = {%s},\n" % " and ".join(authors))
+    text.append("  author = {%s},\n" % " and ".join(authors))
 
     # Create all remaining fields and close the BibTeX entry.
 
