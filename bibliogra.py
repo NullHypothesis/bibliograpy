@@ -94,13 +94,8 @@ def print_article(bib_entry):
     Convert the given BibTeX article to HTML.
     """
 
-    year = journal = ""
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "journal" in bib_entry.fields:
-        journal = bib_entry.fields["journal"]
+    year = bib_entry.fields.get("year", "")
+    journal = bib_entry.fields.get("journal", "")
 
     return ("Article in: <span class=\"venue\">%s</span>, %s\n" %
             (latex_to_html(journal), latex_to_html(year)))
@@ -111,16 +106,9 @@ def print_inproceedings(bib_entry):
     Convert the given BibTeX inproceedings to HTML.
     """
 
-    booktitle = year = publisher = ""
-
-    if "booktitle" in bib_entry.fields:
-        booktitle = bib_entry.fields["booktitle"]
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "publisher" in bib_entry.fields:
-        publisher = bib_entry.fields["publisher"]
+    booktitle = bib_entry.fields.get("booktitle", "")
+    publisher = bib_entry.fields.get("publisher", "")
+    year = bib_entry.fields.get("year", "")
 
     return ("In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" %
             (latex_to_html(booktitle), latex_to_html(year),
@@ -132,13 +120,8 @@ def print_proceedings(bib_entry):
     Convert the given BibTeX proceedings to HTML.
     """
 
-    year = publisher = ""
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "publisher" in bib_entry.fields:
-        publisher = bib_entry.fields["publisher"]
+    publisher = bib_entry.fields.get("publisher", "")
+    year = bib_entry.fields.get("year", "")
 
     return ("<span class=\"venue\">Proceedings</span>, %s, %s\n" %
             (latex_to_html(publisher), latex_to_html(year)))
@@ -149,13 +132,8 @@ def print_techreport(bib_entry):
     Convert the given BibTeX techreport to HTML.
     """
 
-    year = institution = ""
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "institution" in bib_entry.fields:
-        institution = bib_entry.fields["institution"]
+    year = bib_entry.fields.get("year", "")
+    institution = bib_entry.fields.get("institution", "")
 
     return ("<span class=\"venue\">Technical Report</span>, %s, %s\n" %
             (latex_to_html(year), latex_to_html(institution)))
@@ -166,13 +144,8 @@ def print_inbook(bib_entry):
     Convert the given BibTeX book chapter to HTML.
     """
 
-    year = publisher = ""
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "publisher" in bib_entry.fields:
-        publisher = bib_entry.fields["publisher"]
+    year = bib_entry.fields.get("year", "")
+    publisher = bib_entry.fields.get("publisher", "")
 
     return ("<span class=\"venue\">Book chapter</span>, %s, %s\n" %
             (latex_to_html(publisher), latex_to_html(year)))
@@ -183,13 +156,8 @@ def print_book(bib_entry):
     Convert the given BibTeX book to HTML.
     """
 
-    year = publisher = ""
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
-
-    if "publisher" in bib_entry.fields:
-        publisher = bib_entry.fields["publisher"]
+    year = bib_entry.fields.get("year", "")
+    publisher = bib_entry.fields.get("publisher", "")
 
     return ("<span class=\"venue\">Book</span>, %s, %s\n" %
             (latex_to_html(publisher), latex_to_html(year)))
@@ -200,13 +168,8 @@ def print_phdthesis(bib_entry):
     Convert the given BibTeX Ph.D. thesis to HTML.
     """
 
-    school = year = ""
-
-    if "school" in bib_entry.fields:
-        school = bib_entry.fields["school"]
-
-    if "year" in bib_entry.fields:
-        year = bib_entry.fields["year"]
+    school = bib_entry.fields.get("school", "")
+    year = bib_entry.fields.get("year", "")
 
     return ("Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" %
             (latex_to_html(school), latex_to_html(year)))
