@@ -175,7 +175,7 @@ def print_phdthesis(bib_entry):
             (latex_to_html(school), latex_to_html(year)))
 
 
-def print_misc(bib_entry):
+def print_misc(_):
     """
     Convert the given BibTeX stuff to HTML.
     """
@@ -260,7 +260,7 @@ def format_html(key, bib_entry, output_dir, hilight=None):
 
     # Add venue/publication type.
 
-    if not (bib_entry.type in conversion_table):
+    if bib_entry.type not in conversion_table:
         raise NotImplementedError("BibTeX type `%s' not supported.  "
                                   "Skipping" % bib_entry.type)
 
