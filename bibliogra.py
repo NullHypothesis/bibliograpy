@@ -27,7 +27,16 @@ import argparse
 import latexcodec
 import pybtex.database.input.bibtex as bibtex
 
-esc = cgi.escape
+
+def latex_to_html(string):
+    """
+    Convert LaTeX-formatted to HTML-formatted strings.
+    """
+
+    # Note that cgi.escape() only takes care of the characters '&', '<', '>',
+    # and, since we set the "quote" parameter, '"'.
+
+    return cgi.escape(string.decode("latex"), quote=True)
 
 
 def create_directory(dir_name):
@@ -93,8 +102,8 @@ def print_article(bib_entry):
     if "journal" in bib_entry.fields:
         journal = bib_entry.fields["journal"]
 
-    return "Article in: <span class=\"venue\">%s</span>, %s\n" % (esc(journal),
-                                                                  esc(year))
+    return ("Article in: <span class=\"venue\">%s</span>, %s\n" %
+            (latex_to_html(journal), latex_to_html(year)))
 
 
 def print_inproceedings(bib_entry):
@@ -114,7 +123,8 @@ def print_inproceedings(bib_entry):
         publisher = bib_entry.fields["publisher"]
 
     return ("In Proc. of: <span class=\"venue\">%s</span>, %s, %s\n" %
-            (esc(booktitle), esc(year), esc(publisher)))
+            (latex_to_html(booktitle), latex_to_html(year),
+             latex_to_html(publisher)))
 
 
 def print_proceedings(bib_entry):
@@ -131,7 +141,7 @@ def print_proceedings(bib_entry):
         publisher = bib_entry.fields["publisher"]
 
     return ("<span class=\"venue\">Proceedings</span>, %s, %s\n" %
-            (esc(publisher), esc(year)))
+            (latex_to_html(publisher), latex_to_html(year)))
 
 
 def print_techreport(bib_entry):
@@ -148,7 +158,7 @@ def print_techreport(bib_entry):
         institution = bib_entry.fields["institution"]
 
     return ("<span class=\"venue\">Technical Report</span>, %s, %s\n" %
-            (esc(year), esc(institution)))
+            (latex_to_html(year), latex_to_html(institution)))
 
 
 def print_inbook(bib_entry):
@@ -165,7 +175,7 @@ def print_inbook(bib_entry):
         publisher = bib_entry.fields["publisher"]
 
     return ("<span class=\"venue\">Book chapter</span>, %s, %s\n" %
-            (esc(publisher), esc(year)))
+            (latex_to_html(publisher), latex_to_html(year)))
 
 
 def print_book(bib_entry):
@@ -181,8 +191,8 @@ def print_book(bib_entry):
     if "publisher" in bib_entry.fields:
         publisher = bib_entry.fields["publisher"]
 
-    return "<span class=\"venue\">Book</span>, %s, %s\n" % (esc(publisher),
-                                                            esc(year))
+    return ("<span class=\"venue\">Book</span>, %s, %s\n" %
+            (latex_to_html(publisher), latex_to_html(year)))
 
 
 def print_phdthesis(bib_entry):
@@ -198,8 +208,8 @@ def print_phdthesis(bib_entry):
     if "year" in bib_entry.fields:
         year = bib_entry.fields["year"]
 
-    return "Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" % (esc(school),
-                                                                   esc(year))
+    return ("Ph.D thesis: <span class=\"venue\">%s</span>, %s\n" %
+            (latex_to_html(school), latex_to_html(year)))
 
 
 def print_misc(bib_entry):
@@ -241,6 +251,8 @@ def format_authors(persons, hilight):
         authors_list.append(
             " ".join(person.first() + person.middle() + person.last()))
 
+    authors_list = [authors.decode("latex") for authors in authors_list]
+
     authors_str = "%s%s<br/>" % (", ".join(authors_list), " (editors)"
                                  if author_type == "editor" else "")
 
@@ -262,12 +274,12 @@ def format_html(key, bib_entry, output_dir, hilight=None):
     # Header including paper title and links to pdf and bibtex.
 
     html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span>\n" %
-                (key, esc(bib_entry.fields["title"])))
+                (key, latex_to_html(bib_entry.fields["title"])))
 
     html.append("<a name=\"%s\">[" % key)
     if "url" in bib_entry.fields:
-        html.append(
-            "</a><a href=\"%s\">pdf</a>, " % esc(bib_entry.fields["url"]))
+        html.append("</a><a href=\"%s\">pdf</a>, " %
+                    cgi.escape(bib_entry.fields["url"]))
 
     if os.path.isfile(os.path.join(output_dir, "pdf", key + ".pdf")):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
@@ -301,7 +313,7 @@ def format_html(key, bib_entry, output_dir, hilight=None):
 
     final_html = "".join(html).replace("{", "").replace("}", "")
 
-    return final_html.decode("latex")
+    return final_html
 
 
 def sort_by_year(bibdata, output_dir, sort_reverse=False):
@@ -339,8 +351,8 @@ def sort_by_year(bibdata, output_dir, sort_reverse=False):
             year = current_year
 
         try:
-            html.append(format_html(bibkey, bibdata.entries[bibkey], output_dir,
-                                    hilight=str(year)))
+            html.append(format_html(bibkey, bibdata.entries[bibkey],
+                                    output_dir, hilight=str(year)))
         except NotImplementedError as err:
             print >> sys.stderr, "[+] %s" % err
             continue
