@@ -227,6 +227,20 @@ def format_authors(persons, hilight):
     return authors_str
 
 
+def format_url(url):
+    """
+    Return an HTML fragment with a clickable link.
+    """
+
+    url_types = [".pdf", ".ps", ".html", ".txt"]
+    for url_type in url_types:
+        if url.endswith(url_type):
+            return "</a><a href=\"%s\">%s</a>, " % (cgi.escape(url),
+                                                    url_type[1:])
+
+    return "</a><a href=\"%s\">%s</a>, " % (cgi.escape(url), "url")
+
+
 def format_html(key, bib_entry, output_dir, hilight=None):
     """
     Convert the given BibTeX entry to HTML.
@@ -243,8 +257,7 @@ def format_html(key, bib_entry, output_dir, hilight=None):
 
     html.append("<a name=\"%s\">[" % key)
     if "url" in bib_entry.fields:
-        html.append("</a><a href=\"%s\">pdf</a>, " %
-                    cgi.escape(bib_entry.fields["url"]))
+        html.append(format_url(bib_entry.fields["url"]))
 
     if os.path.isfile(os.path.join(output_dir, "pdf", key + ".pdf")):
         html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
