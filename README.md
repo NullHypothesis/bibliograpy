@@ -1,7 +1,9 @@
 bibliograpy
 ===========
 
-This tool converts BibTeX files to HTML bibliographies.
+This tool converts BibTeX files to HTML bibliographies.  Bibliograpy currently
+powers [CensorBib](https://censorbib.nymity.ch) and
+[BlockchainBib](https://allquantor.at/blockchainbib/).
 
 Dependencies
 ============
