@@ -285,6 +285,12 @@ def format_html(key, bib_entry, output_dir, hilight=None):
         venue = venue.replace(hilight, "<b>%s</b>" % hilight)
 
     html.append(venue)
+
+    # Append notes if they exist
+    if "note" in bib_entry.fields:
+        html.append("<span class=\"note\">%s</span>\n" %
+                    latex_to_html(bib_entry.fields["note"]))
+
     html.append("</li>\n")
 
     # Remove curly braces because latexcodec won't do it for us.
