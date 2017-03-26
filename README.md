@@ -4,7 +4,7 @@ bibliograpy
 This tool converts BibTeX files to HTML bibliographies.  Bibliograpy currently
 powers [CensorBib](https://censorbib.nymity.ch),
 [BlockchainBib](https://allquantor.at/blockchainbib/), and
-[a bibliography on mix networks](https://bib.mixnetworks.org).
+[MixBib](https://bib.mixnetworks.org).
 
 Dependencies
 ============
