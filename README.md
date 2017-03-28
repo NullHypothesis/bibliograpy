@@ -42,4 +42,4 @@ Don't like `bibliograpy`?  Then have a look at
 Feedback
 ========
 Feel free to contact <phw@nymity.ch>.  You can use
-[this](http://www.cs.kau.se/philwint/gpg/openpgp.html) OpenPGP key.
+[this](https://nymity.ch/openpgp_public_key.txt) OpenPGP key.
