@@ -96,11 +96,11 @@ def print_article(bib_entry):
 
     year = bib_entry.fields.get("year", "")
     journal = bib_entry.fields.get("journal", "")
-    publisher = bib_entry.fields.get("publisher", "")
+    volume = bib_entry.fields.get("volume", "")
+    number = bib_entry.fields.get("number", "")
 
-    return ("Article in: <span class=\"venue\">%s</span>, %s, %s\n" %
-            (latex_to_html(journal), latex_to_html(year),
-             latex_to_html(publisher)))
+    return ("Article in: <span class=\"venue\">%s</span> %s.%s, %s\n" %
+            (latex_to_html(journal), volume, number, latex_to_html(year)))
 
 
 def print_inproceedings(bib_entry):
