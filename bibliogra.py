@@ -177,12 +177,15 @@ def print_phdthesis(bib_entry):
             (latex_to_html(school), latex_to_html(year)))
 
 
-def print_misc(_):
+def print_misc(bib_entry):
     """
     Convert the given BibTeX stuff to HTML.
     """
 
-    return "<span class=\"venue\">Miscellaneous</span>\n"
+    year = bib_entry.fields.get("year", "")
+
+    return ("<span class=\"venue\">Miscellaneous</span>, %s\n" %
+            latex_to_html(year))
 
 
 conversion_table = {
