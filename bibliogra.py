@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2014, 2015 Philipp Winter <phw@nymity.ch>
+# Copyright 2014-2017 Philipp Winter <phw@nymity.ch>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -98,9 +98,11 @@ def print_article(bib_entry):
     journal = bib_entry.fields.get("journal", "")
     volume = bib_entry.fields.get("volume", "")
     number = bib_entry.fields.get("number", "")
+    publisher = bib_entry.fields.get("publisher", "")
 
-    return ("Article in: <span class=\"venue\">%s</span> %s.%s, %s\n" %
-            (latex_to_html(journal), volume, number, latex_to_html(year)))
+    return ("Article in: <span class=\"venue\">%s</span> %s.%s, %s, %s\n" %
+            (latex_to_html(journal), volume, number, latex_to_html(year),
+             publisher))
 
 
 def print_inproceedings(bib_entry):
