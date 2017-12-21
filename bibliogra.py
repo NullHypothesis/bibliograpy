@@ -240,10 +240,10 @@ def format_url(url):
     url_types = [".pdf", ".ps", ".html", ".txt"]
     for url_type in url_types:
         if url.endswith(url_type):
-            return "</a><a href=\"%s\">%s</a>, " % (cgi.escape(url),
-                                                    url_type[1:])
+            return "</a><a href=\"%s\">%s</a> &bull; " % (cgi.escape(url),
+                                                          url_type[1:])
 
-    return "</a><a href=\"%s\">%s</a>, " % (cgi.escape(url), "url")
+    return "</a><a href=\"%s\">%s</a> &bull; " % (cgi.escape(url), "url")
 
 
 def format_html(key, bib_entry, output_dir, hilight=None):
@@ -265,9 +265,9 @@ def format_html(key, bib_entry, output_dir, hilight=None):
         html.append(format_url(bib_entry.fields["url"]))
 
     if os.path.isfile(os.path.join(output_dir, "pdf", key + ".pdf")):
-        html.append("<a href=\"pdf/%s.pdf\">cached pdf</a>, " % key)
+        html.append("<a href=\"pdf/%s.pdf\">cached pdf</a> &bull; " % key)
     elif os.path.isfile(os.path.join(output_dir, "ps", key + ".ps")):
-        html.append("<a href=\"ps/%s.ps\">cached ps</a>, " % key)
+        html.append("<a href=\"ps/%s.ps\">cached ps</a> &bull; " % key)
 
     html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
 
