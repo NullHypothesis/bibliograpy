@@ -237,13 +237,15 @@ def format_url(url):
     Return an HTML fragment with a clickable link.
     """
 
-    url_types = [".pdf", ".ps", ".html", ".txt"]
-    for url_type in url_types:
-        if url.endswith(url_type):
-            return "</a><a href=\"%s\">%s</a> &bull; " % (cgi.escape(url),
-                                                          url_type[1:])
+    r = "<a href='%s'>" % cgi.escape(url)
 
-    return "</a><a href=\"%s\">%s</a> &bull; " % (cgi.escape(url), "url")
+    if url.endswith(".pdf"):
+        r += "<img class='icon' title='Download PDF'" \
+             " src='img/pdf-icon.svg' alt='PDF download icon' /></a>"
+    else:
+        r += "<img class='icon' title='Download file'" \
+             " src='img/file-icon.svg' alt='File download icon' /></a>"
+    return r
 
 
 def format_html(key, bib_entry, output_dir, hilight=None):
@@ -257,24 +259,45 @@ def format_html(key, bib_entry, output_dir, hilight=None):
 
     # Header including paper title and links to pdf and bibtex.
 
-    html.append("<span class=\"paper\"><a href=\"#%s\">%s</a></span>\n" %
+    html.append("<span class=\"paper\"><a name=\"%s\">%s</a></span>\n" %
                 (key, latex_to_html(bib_entry.fields["title"])))
 
-    html.append("<a name=\"%s\">[" % key)
+    html.append("<span class='icons'>")
+    #html.append("<a name=\"%s\">&nbsp;" % key)
     if "url" in bib_entry.fields:
         html.append(format_url(bib_entry.fields["url"]))
 
     if os.path.isfile(os.path.join(output_dir, "pdf", key + ".pdf")):
-        html.append("<a href=\"pdf/%s.pdf\">cached pdf</a> &bull; " % key)
+        html.append("<a href='pdf/%s.pdf'>" % key)
+        html.append('<img class="icon" title="Download cached PDF" src="img/cache-icon.svg" alt="Cached PDF download icon"/>')
+        html.append("</a>")
     elif os.path.isfile(os.path.join(output_dir, "ps", key + ".ps")):
-        html.append("<a href=\"ps/%s.ps\">cached ps</a> &bull; " % key)
+        html.append("<a href=\"ps/%s.ps\">" % key)
+        html.append('<img class="icon" title="Download cached file" src="img/cache-icon.svg" alt="Cached file download icon"/>')
+        html.append("</a>")
 
-    html.append("<a href=\"bibtex.html#%s\">bib</a>]<br/>\n" % key)
+    # BibTex link with icon.
+
+    html.append("<a href='bibtex.html#%s'>" % key +
+                "<img class='icon' title='Download BibTeX record'" +
+                " src='img/bibtex-icon.svg' alt='BibTeX download icon' />" +
+                "</a>")
+
+    # Anchor link to paper.
+
+    html.append("<a href='#%s'>" % key +
+                "<img class='icon' title='Link to paper'" +
+                " src='img/link-icon.svg' alt='Link to paper' />" +
+                "</a>\n")
+
+    html.append("</span><br/>")
 
     # Add author/editor list.
 
     try:
+        html.append("<span class='author'>")
         html.append(format_authors(bib_entry.persons, hilight))
+        html.append("</span>")
     except IndexError as err:
         print >> sys.stderr, "[+] %s" % err
 
@@ -289,7 +312,9 @@ def format_html(key, bib_entry, output_dir, hilight=None):
     if hilight:
         venue = venue.replace(hilight, "<b>%s</b>" % hilight)
 
+    html.append("<span class='other'>")
     html.append(venue)
+    html.append("</span>")
 
     # Append notes if they exist
     if "note" in bib_entry.fields:
